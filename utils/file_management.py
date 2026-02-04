@@ -1,6 +1,6 @@
 from mazegen.cell_class import Cell
-
-
+from collections import deque
+import os
 
 
 class FileManagement:
@@ -22,7 +22,10 @@ class FileManagement:
 
 
     def write_result_to_file(self, filename, entry, exit):
-        file = open(filename, 'w')
+        current_path = os.getcwd()
+        current_path += "/output" + "/" + filename
+        
+        file = open(current_path, 'w')
         res = ""
 
         width: int = len(self.grid[0])
@@ -36,29 +39,32 @@ class FileManagement:
             res = ""
         
         file.write("\n%d,%d" % (entry[0], entry[1]))
-        file.write("\n%d,%d" % (exit[0], exit[1]))
-        
+        file.write("\n%d,%d\n" % (exit[0], exit[1]))
+        path = self.find_shortest_path(entry, exit)
+        file.write(''.join(path))
+        file.write("\n")
         file.close()
- 
-    # def find_shortest_path(grid, start, end):
-    #     width = len(grid[0])
-    #     height = len(grid)
-    #     dirs = {'N': (0, -1), 'E': (1, 0), 'S': (0, 1), 'W': (-1, 0)}
-    #     queue = deque()
-    #     queue.append((start, []))
-    #     visited = set()
-    #     visited.add(start)
 
-    #     while queue:
-    #         (x, y), path = queue.popleft()
-    #         if (x, y) == end:
-    #             return path
-    #         cell = grid[y][x]
-    #         for d, (dx, dy) in dirs.items():
-    #             nx, ny = x + dx, y + dy
-    #             if 0 <= nx < width and 0 <= ny < height and (nx, ny) not in visited:
-    #                 if not cell.walls[d]:
-    #                     queue.append(((nx, ny), path + [d]))
-    #                     visited.add((nx, ny))
-    #     return []
+
+    def find_shortest_path(self, start, end):
+        width = len(self.grid[0])
+        height = len(self.grid)
+        dirs = {'N': (0, -1), 'E': (1, 0), 'S': (0, 1), 'W': (-1, 0)}
+        queue = deque()
+        queue.append((start, []))
+        visited = set()
+        visited.add(start)
+
+        while queue:
+            (x, y), path = queue.popleft()
+            if (x, y) == end:
+                return path
+            cell = self.grid[y][x]
+            for d, (dx, dy) in dirs.items():
+                nx, ny = x + dx, y + dy
+                if 0 <= nx < width and 0 <= ny < height and (nx, ny) not in visited:
+                    if not cell.walls[d]:
+                        queue.append(((nx, ny), path + [d]))
+                        visited.add((nx, ny))
+        return []
 
