@@ -37,7 +37,10 @@ try:
     exit = config.get("EXIT")
     file = config.get("OUTPUT_FILE")
     seed = config.get("SEED")
-    perfect = config.get("PERFECT", False)
+    perfect = config.get("PERFECT")
+    if width is None or height is None or entry is None or exit is None or file is None or perfect is None:
+        raise Exception("Missing required configuration parameters.")
+    print(config)
 except Exception as error:
     print(f"Error: {error}")
 
@@ -121,6 +124,6 @@ def main():
             break
 
 
-if __name__ == "__main__":
-    main()
-    os.system("clear")
+# if __name__ == "__main__":
+#     main()
+#     os.system("clear")
