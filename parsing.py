@@ -13,22 +13,56 @@ class parsing:
                                          f"{line.strip()}")
                     key = line.split("=")[0].strip()
                     value = line.split("=")[1].strip()
+
                     if key == "WIDTH":
-                        if not value.isdigit():
+                        try:
+                            value = int(value)
+                        except ValueError:
                             raise ValueError("WIDTH should be an integer")
-                        data[key] = int(value)
+
+                        if value <= 0:
+                            raise ValueError("WIDTH should be a positive integer")
+                        elif value > 100:
+                            raise ValueError("WIDTH should be less than or equal to 100")
+                        data[key] = value
+
                     elif key == "HEIGHT":
-                        if not value.isdigit():
+                        try:
+                            value = int(value)
+                        except ValueError:
                             raise ValueError("HEIGHT should be an integer")
+
+                        if value <= 0:
+                            raise ValueError("HEIGHT should be a positive integer")
+                        elif value > 100:
+                            raise ValueError("HEIGHT should be less than or equal to 100")
                         data[key] = int(value)
+
                     elif key == "ENTRY":
-                        parts = value.split(",")
-                        data[key] = (int(parts[0].strip()),
-                                     int(parts[1].strip()))
+                        ex, ey = value.split(",")
+                        try:
+                            ex = int(ex)
+                            ey = int(ey)
+                        except ValueError:
+                            raise ValueError("ENTRY should be in the format x,y where x and y are integers")
+                        if ex < 0 or ey < 0:
+                            raise ValueError("ENTRY coordinates should be non-negative integers")
+                        elif int(ex) > 100 or int(ey) > 100:
+                            raise ValueError("ENTRY coordinates should be less than or equal to 100")
+                        data[key] = (ex, ey)
+
                     elif key == "EXIT":
-                        parts = value.split(",")
-                        data[key] = (int(parts[0].strip()),
-                                     int(parts[1].strip()))
+                        xx, xy = value.split(",")
+                        try:
+                            xx = int(xx)
+                            xy = int(xy)
+                        except ValueError:
+                            raise ValueError("EXIT should be in the format x,y where x and y are integers")
+                        if xx < 0 or xy < 0:
+                            raise ValueError("EXIT coordinates should be non-negative integers")
+                        elif int(xx) > 100 or int(xy) > 100:
+                            raise ValueError("EXIT coordinates should be less than or equal to 100")
+                        data[key] = (xx, xy)
                     elif key == "PERFECT":
                         perfect = parsing.parse_bool(value)
                         if perfect is None:
@@ -40,10 +74,15 @@ class parsing:
                         else:
                             raise ValueError("OUTPUT_FILE should be maze.txt")
                     elif key == "SEED":
-                        if value.isdigit():
-                            data[key] = int(value)
-                        elif value.lower() == "none" or value == "":
+                        v = value.strip().lower()
+                        if v in ("none", ""):
                             data[key] = None
+                        else:
+                            try:
+                                data[key] = int(v)
+                            except ValueError:
+                                raise ValueError("SEED must be an integer or None")
+
             return data
         except Exception as e:
             print(f"Error: {e}")

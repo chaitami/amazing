@@ -31,17 +31,24 @@ if config_path != "config.txt":
 parser = parsing()
 try:
     config = parser.parse_config(config_path)
+    width = config.get("WIDTH")
+    height = config.get("HEIGHT")
+    entry = config.get("ENTRY")
+    exit = config.get("EXIT")
+    file = config.get("OUTPUT_FILE")
+    seed = config.get("SEED")
+    perfect = config.get("PERFECT", False)
 except Exception as error:
     print(f"Error: {error}")
 
 ####################
-width = config.get("WIDTH", 10)
-height = config.get("HEIGHT", 10)
-entry = config.get("ENTRY", (0, 0))
-exit = config.get("EXIT", (width-1, height-1))
-file = config.get("OUTPUT_FILE", "config.txt")
-seed = config.get("SEED", 0)
-perfect = config.get("PERFECT", False)
+# width = config.get("WIDTH")
+# height = config.get("HEIGHT")
+# entry = config.get("ENTRY")
+# exit = config.get("EXIT")
+# file = config.get("OUTPUT_FILE")
+# seed = config.get("SEED")
+# perfect = config.get("PERFECT", False)
 ####################
 
 
