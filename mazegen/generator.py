@@ -113,8 +113,6 @@ class Generator:
 
 
 
-
-
     def print_maze(self, show_path: bool = False, path_coords: list[tuple[int,int]] = None, color: str = "\033[36m"):
         CYAN  = "\033[36m"
 

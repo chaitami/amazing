@@ -25,18 +25,25 @@ if len(sys.argv) != 2:
 
 
 config_path = sys.argv[1]
+if config_path != "config.txt":
+    print("Error: Config file should be named config.txt")
+    sys.exit(1)
 parser = parsing()
-config = parser.parse_config(config_path)
-print(config)
+try:
+    config = parser.parse_config(config_path)
+except Exception as error:
+    print(f"Error: {error}")
+
 ####################
-width = config["WIDTH"]
-height = config["HEIGHT"]
-entry = config["ENTRY"]
-exit = config["EXIT"]
-file = config["OUTPUT_FILE"]
-seed=config["SEED"]
-perfect=config["PERFECT"]
+width = config.get("WIDTH", 10)
+height = config.get("HEIGHT", 10)
+entry = config.get("ENTRY", (0, 0))
+exit = config.get("EXIT", (width-1, height-1))
+file = config.get("OUTPUT_FILE", "config.txt")
+seed = config.get("SEED", 0)
+perfect = config.get("PERFECT", False)
 ####################
+
 
 
 list_of_colors = [
@@ -107,6 +114,6 @@ def main():
             break
 
 
-# if __name__ == "__main__":
-#     main()
-#     os.system("clear")
+if __name__ == "__main__":
+    main()
+    os.system("clear")
