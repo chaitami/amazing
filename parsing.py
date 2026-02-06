@@ -1,3 +1,5 @@
+import sys
+
 
 class parsing:
     def __init__(self):
@@ -8,11 +10,17 @@ class parsing:
             data = {}
             with open(filename) as file:
                 for line in file:
+                    line = line.strip()
+                    if not line or line.startswith("#"):
+                        continue
                     if line.find("=") == -1:
                         raise ValueError("Invalid line in config:"
-                                         f"{line.strip()}")
+                                         f"{line}")
                     key = line.split("=")[0].strip()
                     value = line.split("=")[1].strip()
+
+                    if key in data:
+                        raise ValueError(f"Duplicate key '{key}'")
 
                     if key == "WIDTH":
                         try:
@@ -63,16 +71,19 @@ class parsing:
                         elif int(xx) > 100 or int(xy) > 100:
                             raise ValueError("EXIT coordinates should be less than or equal to 100")
                         data[key] = (xx, xy)
+
                     elif key == "PERFECT":
                         perfect = parsing.parse_bool(value)
                         if perfect is None:
                             raise ValueError("PERFECT should be a boolean")
                         data[key] = perfect
+
                     elif key == "OUTPUT_FILE":
                         if value == "maze.txt" or value == "":
                             data[key] = "maze.txt"
                         else:
                             raise ValueError("OUTPUT_FILE should be maze.txt")
+
                     elif key == "SEED":
                         v = value.strip().lower()
                         if v in ("none", ""):
@@ -86,6 +97,7 @@ class parsing:
             return data
         except Exception as e:
             print(f"Error: {e}")
+            sys.exit(1)
 
     @staticmethod
     def parse_bool(value: str) -> bool:

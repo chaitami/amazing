@@ -1,4 +1,5 @@
 from mazegen.cell_class import Cell
+from typing import Optional
 import random
 
 
@@ -13,12 +14,13 @@ WHITE = "\033[37m"
 
 
 class Generator:
-    def __init__(self, height, width, entry, exit, seed: int | None, perfect) -> None:
+    # def __init__(self, height, width, entry, exit_, seed: int | None, perfect) -> None:
+    def __init__(self, height, width, entry, exit_, seed: Optional[int], perfect) -> None:
         self.height = height
         self.width = width
         self.grid = self.create_grid()
         self.entry = entry
-        self.exit = exit
+        self.exit_ = exit_
         self.seed = seed
         self.perfect = perfect
 
@@ -59,22 +61,22 @@ class Generator:
 
     def generate_a_maze(self, start_x: int = 0, start_y: int = 0):
 
-        #check if enter and exit true:
+        #check if enter and exit_ true:
         
         # if not (0 <= self.entry[0] < self.width and 0 <= self.entry[1] < self.height):
         #     raise ValueError(f"ENTRY coordinates {self.entry} are out of bounds")
     
-        # if not (0 <= self.exit[0] < self.width and 0 <= self.exit[1] < self.height):
-        #     raise ValueError(f"EXIT coordinates {self.exit} are out of bounds")
+        # if not (0 <= self.exit_[0] < self.width and 0 <= self.exit_[1] < self.height):
+        #     raise ValueError(f"EXIT_ coordinates {self.exit_} are out of bounds")
 
-        # if self.entry == self.exit:
-        #     raise ValueError("ENTRY and EXIT cannot be the same cell")
+        # if self.entry == self.exit_:
+        #     raise ValueError("ENTRY and EXIT_ cannot be the same cell")
 
         # if not (self._is_on_border(*self.entry)):
         #     raise ValueError(f"ENTRY {self.entry} must be on the maze border")
 
-        # if not (self._is_on_border(*self.exit)):
-        #     raise ValueError(f"EXIT {self.exit} must be on the maze border")
+        # if not (self._is_on_border(*self.exit_)):
+        #     raise ValueError(f"EXIT_ {self.exit_} must be on the maze border")
         
         
         if self.seed is not None:
@@ -104,7 +106,7 @@ class Generator:
         self.close_external_borders()
 
         self.open_external_wall(self.entry)
-        self.open_external_wall(self.exit)
+        self.open_external_wall(self.exit_)
 
 
 
@@ -127,7 +129,7 @@ class Generator:
                 side += color + '┃' + RESET if self.grid[y][x].walls['W'] else ' '
                 if (x, y) == self.entry:
                     side += RED + 'EN ' + RESET
-                elif (x, y) == self.exit:
+                elif (x, y) == self.exit_:
                     side += RED + 'EX ' + RESET
                 elif show_path and path_coords and (x, y) in path_coords:
                     side += RED + ' * ' + RESET
@@ -191,7 +193,7 @@ class Generator:
         cell = self.grid[y][x]
     
         if not self._is_on_border(x, y):
-            raise ValueError("ENTRY and EXIT must be on the maze border")
+            raise ValueError("ENTRY and EXIT_ must be on the maze border")
     
         # corners → choose vertical first
         if y == 0:
@@ -211,14 +213,14 @@ class Generator:
     
     def close_external_borders(self) -> None:
         """
-        تأكد أن كل الحدود الخارجية للمتاهة مغلقة ما عدا ENTRY و EXIT
+        تأكد أن كل الحدود الخارجية للمتاهة مغلقة ما عدا ENTRY و EXIT_
         """
         for x in range(self.width):
             # الصف العلوي
             if (x, 0) != self.entry:
                 self.grid[0][x].walls["N"] = True
             # الصف السفلي
-            if (x, self.height - 1) != self.exit:
+            if (x, self.height - 1) != self.exit_:
                 self.grid[self.height - 1][x].walls["S"] = True
 
         for y in range(self.height):
@@ -226,7 +228,7 @@ class Generator:
             if (0, y) != self.entry:
                 self.grid[y][0].walls["W"] = True
             # العمود الأيمن
-            if (self.width - 1, y) != self.exit:
+            if (self.width - 1, y) != self.exit_:
                 self.grid[y][self.width - 1].walls["E"] = True
 
     

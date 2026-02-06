@@ -19,30 +19,7 @@ def path_to_coordinates(start: tuple[int,int], directions: list[str]) -> list[tu
     return coords
 
 
-if len(sys.argv) != 2:
-    print("Usage: python a_maze_ing.py config.txt")
-    sys.exit(1)
 
-
-config_path = sys.argv[1]
-if config_path != "config.txt":
-    print("Error: Config file should be named config.txt")
-    sys.exit(1)
-parser = parsing()
-try:
-    config = parser.parse_config(config_path)
-    width = config.get("WIDTH")
-    height = config.get("HEIGHT")
-    entry = config.get("ENTRY")
-    exit = config.get("EXIT")
-    file = config.get("OUTPUT_FILE")
-    seed = config.get("SEED")
-    perfect = config.get("PERFECT")
-    if width is None or height is None or entry is None or exit is None or file is None or perfect is None:
-        raise Exception("Missing required configuration parameters.")
-    print(config)
-except Exception as error:
-    print(f"Error: {error}")
 
 ####################
 # width = config.get("WIDTH")
@@ -72,21 +49,44 @@ list_of_colors = [
 ]
 
 
-
 def main():
+
+    if len(sys.argv) != 2:
+        print("Usage: python a_maze_ing.py config.txt")
+        sys.exit(1)
+
+    config_path = sys.argv[1]
+    if config_path != "config.txt":
+        print("Error: Config file should be named config.txt")
+        sys.exit(1)
+    parser = parsing()
+    try:
+        config = parser.parse_config(config_path)
+        width = config.get("WIDTH")
+        height = config.get("HEIGHT")
+        entry = config.get("ENTRY")
+        exit_ = config.get("EXIT")
+        file = config.get("OUTPUT_FILE")
+        perfect = config.get("PERFECT")
+        seed = config.get("SEED")
+        if width is None or height is None or entry is None or exit_ is None or file is None or perfect is None:
+            raise Exception("Missing required configuration parameters.")
+        # print(config)
+    except Exception as error:
+        print(f"Error: {error}")
+        sys.exit(1)
 
     show = False
     color = "\033[36m"
 
-    gen = Generator(height, width, entry, exit, seed, perfect)
+    gen = Generator(height, width, entry, exit_, seed, perfect)
     gen.generate_a_maze()
     f_obj = FileManagement(gen.get_grid())
-    f_obj.write_result_to_file(file, entry, exit)
-    path = f_obj.find_shortest_path(entry, exit)
+    f_obj.write_result_to_file(file, entry, exit_)
+    path = f_obj.find_shortest_path(entry, exit_)
     c = path_to_coordinates(entry, path)
     gen.print_maze(show, path_coords=c)
     num: int = 0
-    
 
     while 1:
         print("\n=== A-Maze-ing ===")
@@ -94,15 +94,19 @@ def main():
         print("2. Show/Hide path from entry to exit")
         print("3. Rotate maze colors")
         print("4. Quit")
-        num = int(input("Choice? (1-4): "))
+        try:
+            num = int(input("Choice? (1-4): "))
+        except Exception as e:
+            print(e)
+            break
 
         if num == 1:
             os.system("clear")
-            gen = Generator(height, width, entry, exit, seed, perfect)
+            gen = Generator(height, width, entry, exit_, seed, perfect)
             gen.generate_a_maze()
             f_obj = FileManagement(gen.get_grid())
-            f_obj.write_result_to_file(file, entry, exit)
-            path = f_obj.find_shortest_path(entry, exit)
+            f_obj.write_result_to_file(file, entry, exit_)
+            path = f_obj.find_shortest_path(entry, exit_)
             c = path_to_coordinates(entry, path)
             gen.print_maze(show, path_coords=c, color=color)
             continue
@@ -124,6 +128,6 @@ def main():
             break
 
 
-# if __name__ == "__main__":
-#     main()
-#     os.system("clear")
+if __name__ == "__main__":
+    main()
+    os.system("clear")
