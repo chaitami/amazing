@@ -19,9 +19,6 @@ debug:
 clean:
 	find . -type d -name "__pycache__" -exec rm -rf {} +
 	find . -type d -name ".mypy_cache" -exec rm -rf {} +
-	find . -type d -name ".pytest_cache" -exec rm -rf {} +
-	find . -type f -name "*.pyc" -delete
-	find . -type f -name "*.pyo" -delete
 
 # ── Lint (mandatory flags) ───────────────────────────────────────────
 lint:
@@ -33,9 +30,5 @@ lint:
         --disallow-untyped-defs \
         --check-untyped-defs
 
-# ── Lint strict (optional, enhanced checking) ────────────────────────
-lint-strict:
-	flake8 .
-	mypy . --strict
 
 .PHONY: install run debug clean lint lint-strict

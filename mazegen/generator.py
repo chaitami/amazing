@@ -115,33 +115,38 @@ class Generator:
 
 
 
-    def print_maze(self, show_path: bool = False, path_coords: list[tuple[int,int]] = None, color: str = "\033[36m"):
-        CYAN  = "\033[36m"
+def print_maze(show_path: bool = False, path_coords: list[tuple[int,int]] = None, color: str = "\033[36m", grid = [[]]):
+    RESET = "\033[0m"
+    RED   = "\033[31m"
+    GREEN   = "\033[0m"
 
-        for y in range(self.height):
-            top = ''
-            for x in range(self.width):
-                top += '+' + (color + '━━━' + RESET if self.grid[y][x].walls['N'] else '   ')
-            print(top + '+')
+    height = len(grid)
+    width = len(grid[0])
 
-            side = ''
-            for x in range(self.width):
-                side += color + '┃' + RESET if self.grid[y][x].walls['W'] else ' '
-                if (x, y) == self.entry:
-                    side += RED + 'EN ' + RESET
-                elif (x, y) == self.exit_:
-                    side += RED + 'EX ' + RESET
-                elif show_path and path_coords and (x, y) in path_coords:
-                    side += RED + ' * ' + RESET
-                else:
-                    side += '   '
-            side += color + '┃' + RESET
-            print(side)
-
-        bottom = ''
-        for x in range(self.width):
-            bottom += '+' + (color + '━━━' + RESET if self.grid[self.height-1][x].walls['S'] else '   ')
-        print(bottom + '+')
+    for y in range(height):
+        top = ''
+        for x in range(width):
+            top += '+' + (color + '━━━' + RESET if grid[y][x].walls['N'] else '   ')
+        print(top + '+')
+        side = ''
+        for x in range(width):
+            side += color + '┃' + RESET if grid[y][x].walls['W'] else ' '
+            if (x, y) == entry:
+                side += RED + 'EN ' + RESET
+            elif (x, y) == exit:
+                side += RED + 'EX ' + RESET
+            elif show_path and path_coords and (x, y) in path_coords:
+                side += RED + ' ☺ ' + RESET
+            elif grid[y][x].walls["N"] and grid[y][x].walls["E"] and grid[y][x].walls["S"] and grid[y][x].walls["W"]:
+                side += GREEN + '███' + RESET
+            else:
+                side += '   '
+        side += color + '┃' + RESET
+        print(side)
+    bottom = ''
+    for x in range(width):
+        bottom += '+' + (color + '━━━' + RESET if grid[height-1][x].walls['S'] else '   ')
+    print(bottom + '+')
 
 
 
